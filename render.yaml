@@ -1,0 +1,20 @@
+# Deploy de teste no Render (render.com): New > Blueprint > escolher este repositório.
+# Plano gratuito: o disco é temporário, então os dados somem quando o serviço
+# reinicia ou "dorme". Serve para testar; para uso real veja a seção Deploy do README.
+services:
+  - type: web
+    name: checklist-manutencao
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python seed.py --exemplo && waitress-serve --listen=0.0.0.0:$PORT --threads=8 wsgi:app
+    healthCheckPath: /login
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: TRUST_PROXY
+        value: "1"
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
